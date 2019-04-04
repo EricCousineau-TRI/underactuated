@@ -1,6 +1,7 @@
-import array
+import unittest
+
 import numpy as np
-import matplotlib.pyplot as plt
+
 from pydrake.all import (
     AddRandomInputs,
     BasicVector,
@@ -8,9 +9,7 @@ from pydrake.all import (
     LeafSystem,
     PortDataType,
     RandomDistribution,
-    Simulator
 )
-from underactuated.pyplot_visualizer import PyPlotVisualizer
 
 
 class VanDerPolParticles(LeafSystem):
@@ -46,43 +45,14 @@ class VanDerPolParticles(LeafSystem):
         y[:] = x
 
 
-# Note: This is a candidate for moving to a more central location.
-class Particle2DVisualizer(PyPlotVisualizer):
-    def __init__(self, num_particles, xlim, ylim, draw_timestep):
-        PyPlotVisualizer.__init__(self, draw_timestep)
-        self.DeclareInputPort(PortDataType.kVectorValued, 2*num_particles)
-        self.num_particles = num_particles
-        self.ax.set_xlim(xlim)
-        self.ax.set_ylim(ylim)
-        zero = array.array('d', (0,)*num_particles)
-        self.lines, = self.ax.plot(zero, zero, 'b.')
-
-    def draw(self, context):
-        xy = self.EvalVectorInput(context, 0).CopyToVector()
-        self.lines.set_xdata(xy[:self.num_particles])
-        self.lines.set_ydata(xy[self.num_particles:])
-        self.ax.set_title('t = ' + str(context.get_time()))
+class TestBaddies(unittest.TestCase):
+    def test_bad(self):
+        num_particles = 5000
+        builder = DiagramBuilder()
+        sys = builder.AddSystem(VanDerPolParticles(num_particles))
+        AddRandomInputs(.1, builder)
+        diagram = builder.Build()
 
 
-builder = DiagramBuilder()
-
-num_particles = 5000
-xlim = [-2.75, 2.75]
-ylim = [-3.25, 3.25]
-draw_timestep = .25
-sys = builder.AddSystem(VanDerPolParticles(num_particles))
-visualizer = builder.AddSystem(Particle2DVisualizer(num_particles, xlim,
-                                                    ylim, draw_timestep))
-builder.Connect(sys.get_output_port(0), visualizer.get_input_port(0))
-AddRandomInputs(.1, builder)
-
-# TODO(russt): Plot nominal limit cycle.
-
-diagram = builder.Build()
-simulator = Simulator(diagram)
-simulator.set_publish_every_time_step(False)
-simulator.get_mutable_integrator().set_fixed_step_mode(True)
-simulator.get_mutable_integrator().set_maximum_step_size(0.1)
-
-simulator.StepTo(20)
-plt.show()
+if __name__ == "__main__":
+    unittest.main()
