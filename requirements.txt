@@ -1,0 +1,6 @@
+# pydrake, its dependencies - To be satisfied by downloading / building.
+
+shapely == ?
+trimesh
+jupyter == 1.0.0
+nbformat == ?
