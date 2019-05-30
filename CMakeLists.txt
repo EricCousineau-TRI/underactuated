@@ -6,7 +6,13 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 include(CTest)
 include(GNUInstallDirs)
 
-find_package(PythonInterp 2.7 REQUIRED)
+if(APPLE)
+    set(PYTHON_VERSION_MAJOR_MINOR 3.7)
+else()
+    set(PYTHON_VERSION_MAJOR_MINOR 3.6)
+endif()
+
+find_package(PythonInterp 3.6 REQUIRED)
 
 find_package(drake CONFIG REQUIRED)
 
