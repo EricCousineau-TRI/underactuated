@@ -26,8 +26,8 @@ from pydrake.all import (
     Simulator,
 )
 
-from utils import FindResource
-from pyplot_visualizer import PyPlotVisualizer
+from .utils import FindResource
+from .pyplot_visualizer import PyPlotVisualizer
 
 
 class PlanarRigidBodyVisualizer(PyPlotVisualizer):
