@@ -29,6 +29,46 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set -eux
+set -euo pipefail
 
-sudo ./scripts/continuous_integration/common/linux_ubuntu_xenial
+if [[ "${EUID}" -ne 0 ]]; then
+  echo 'This script must be run as root' >&2
+  exit 1
+fi
+
+# NOTE: Assumes that the drake (binary) install_prereqs script will also be run.  Only install what we need to download drake and any additional requirements for this package.
+
+apt update -qq
+
+# Install development and Drake dependencies.
+apt install -qq --no-install-recommends $(tr '\n' ' ' <<EOF
+curl
+ffmpeg
+libzmq5
+python
+python-dev
+python-pip
+python-setuptools
+python-wheel
+EOF
+)
+
+pip2 install -qq --upgrade --disable-pip-version-check $(tr '\n' ' ' <<EOF
+ipython==5.8.0
+ipykernel==4.8.2
+jupyter
+meshcat
+networkx==2.2
+pycodestyle
+scipy==1.2.1
+shapely
+tornado<6
+trimesh
+EOF
+)
+
+apt remove -qq tidy libtidy-0.99-0
+curl -LO https://github.com/htacg/tidy-html5/releases/download/5.4.0/tidy-5.4.0-64bit.deb
+trap 'rm -f tidy-5.4.0-64bit.deb' EXIT
+echo 'b6b971534ee6bacc68a7c5f9878b0a146fbd7f50c580db76a19823e8541f92f8  tidy-5.4.0-64bit.deb' | sha256sum -c
+dpkg -i tidy-5.4.0-64bit.deb
