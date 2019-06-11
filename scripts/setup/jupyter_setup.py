@@ -37,7 +37,7 @@ def setup_underactuated():
         if platform.system() is 'Darwin':
             get_ipython().system(u'if [ ! -d "/opt/underactuated" ]; then git clone https://github.com/RussTedrake/underactuated.git /opt/underactuated && /opt/underactuated/scripts/setup/mac/install_prereqs; fi')
         elif platform.linux_distribution() == ('Ubuntu', '18.04', 'bionic'):
-            get_ipython().system(u'if [ ! -d "/opt/underactuated" ]; then git clone https://github.com/RussTedrake/underactuated.git /opt/underactuated && git checkout {commit} && /opt/underactuated/scripts/setup/ubuntu/18.04/install_prereqs; fi'.format(commit=commit))
+            get_ipython().system(u'if [ ! -d "/opt/underactuated" ]; then git clone https://github.com/RussTedrake/underactuated.git /opt/underactuated && /opt/underactuated/scripts/setup/ubuntu/18.04/install_prereqs; fi')
         else:
             assert False, "Unsupported platform"
         sys.path.append("/opt/underactuated/src")

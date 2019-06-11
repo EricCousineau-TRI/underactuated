@@ -4,11 +4,11 @@ find_program(PYCODESTYLE_EXECUTABLE pycodestyle REQUIRED)  # pip install pycodes
 
 function(add_pystyle_test pyfile)
 
-  # get_filename_component(pydir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+  get_filename_component(pydir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-  # add_test(NAME ${pydir}_${pyfile}_pycodestyle
-  #          COMMAND "${PYCODESTYLE_EXECUTABLE}" --count --show-source ${pyfile}
-  #          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  add_test(NAME ${pydir}_${pyfile}_pycodestyle
+           COMMAND "${PYCODESTYLE_EXECUTABLE}" --count --show-source ${pyfile}
+           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 endfunction(add_pystyle_test)
 
